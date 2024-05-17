@@ -1,6 +1,5 @@
--- InfOverlay
 -- Made by lev https://github.com/Lev200501/InfOverlay
--- Modified by https://github.com/boncabee/InfOverlay
+-- Modified by boncabee https://github.com/boncabee/InfOverlay
 
 local SCRIPT_VERSION = "1.1"
 
@@ -274,7 +273,7 @@ local function formatMoney(money)
     return roundNum(money/(1000^order), 1)..({"K", "M", "B"})[order]
 end
 
---get ip function
+--get ip function (code from NovaLay)
 local function get_ip_data(ip)
     local data = {city = "", state = "", country = ""}
     if util.is_soup_netintel_inited() then
@@ -294,10 +293,10 @@ while true do
 
             --general info grabbing locals
             local pid = focused[1]
-			local IP = tostring(soup.IpAddr(players.get_connect_ip(pid)))
             if render_window then pid = players.user() end
             local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
             local my_pos, player_pos = players.get_position(players.user()), players.get_position(pid)
+			local IP = tostring(soup.IpAddr(players.get_connect_ip(pid)))
 			local ip_data = get_ip_data(tostring(IP))
             
             --general element drawing locals
