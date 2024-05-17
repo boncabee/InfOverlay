@@ -1,5 +1,6 @@
 -- InfOverlay
--- by lev
+-- Made by lev https://github.com/Lev200501/InfOverlay
+-- Modified by https://github.com/boncabee/InfOverlay
 
 local SCRIPT_VERSION = "1.1"
 
@@ -28,7 +29,7 @@ if auto_updater == true then error("Invalid auto-updater lib. Please delete your
 
 -- Run auto-update
 local auto_update_config = {
-    source_url="https://raw.githubusercontent.com/Lev200501/InfOverlay/main/InfOverlay.lua",
+    source_url="https://raw.githubusercontent.com/boncabee/InfOverlay/main/InfOverlay.lua",
     script_relpath=SCRIPT_RELPATH,
     dependencies={
         {
@@ -273,6 +274,19 @@ local function formatMoney(money)
     return roundNum(money/(1000^order), 1)..({"K", "M", "B"})[order]
 end
 
+--get ip function
+local function get_ip_data(ip)
+    local data = {city = "", state = "", country = ""}
+    if util.is_soup_netintel_inited() then
+        if (loc := soup.netIntel.getLocationByIp(ip)):isValid() then
+            data.city = loc.city
+            data.state = loc.state
+            data.country = soup.getCountryName(loc.country_code, "EN")
+        end
+    end
+    return data
+end
+
 while true do
     if true then
         local focused = players.get_focused()
@@ -280,9 +294,11 @@ while true do
 
             --general info grabbing locals
             local pid = focused[1]
+			local IP = tostring(soup.IpAddr(players.get_connect_ip(pid)))
             if render_window then pid = players.user() end
             local ped = PLAYER.GET_PLAYER_PED_SCRIPT_INDEX(pid)
             local my_pos, player_pos = players.get_position(players.user()), players.get_position(pid)
+			local ip_data = get_ip_data(tostring(IP))
             
             --general element drawing locals
             local spacing_x = spacing/ASPECT_RATIO
@@ -305,7 +321,8 @@ while true do
                         {"Rank", players.get_rank(pid)},
                         {"K/D", roundNum(players.get_kd(pid), 2)},
                         {"Wallet", "$"..formatMoney(players.get_wallet(pid))},
-                        {"Bank", "$"..formatMoney(players.get_bank(pid))}
+                        {"Bank", "$"..formatMoney(players.get_bank(pid))},
+						{"Host Queue", "#"..players.get_host_queue_position(pid)}
                     }
                 },
                 {
@@ -313,9 +330,10 @@ while true do
                     content =
                     {
                         {"Language", ({"English","French","German","Italian","Spanish","Brazilian","Polish","Russian","Korean","Chinese (T)","Japanese","Mexican","Chinese (S)"})[players.get_language(pid) + 1]},
+						{"Country", ip_data.country},
+						{"City", ip_data.city},
                         {"Controller", boolText(players.is_using_controller(pid))},
-                        {"Ping", math.floor(NETWORK._NETWORK_GET_AVERAGE_LATENCY_FOR_PLAYER(pid) + 0.5).." ms"},
-                        {"Host Queue", "#"..players.get_host_queue_position(pid)},
+                        {"Ping", math.floor(NETWORK._NETWORK_GET_AVERAGE_LATENCY_FOR_PLAYER(pid) + 0.5).." ms"}
                     }
                 },
                 {
