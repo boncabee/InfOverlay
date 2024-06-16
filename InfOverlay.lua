@@ -4,6 +4,7 @@
 local SCRIPT_VERSION = "1.1"
 
 -- Auto Updater from https://github.com/hexarobi/stand-lua-auto-updater
+--[[
 local status, auto_updater = pcall(require, "auto-updater")
 if not status then
     local auto_update_complete = nil util.toast("Installing auto-updater...", TOAST_ALL)
@@ -42,6 +43,7 @@ local auto_update_config = {
     }
 }
 auto_updater.run_auto_update(auto_update_config)
+]]--
 
 --natives
 util.require_natives(1640181023)
